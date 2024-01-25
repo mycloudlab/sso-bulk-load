@@ -34,9 +34,9 @@ public class InsertTables {
             realmID = getRealmID();
             defaultRoleID = getDefaultRoleID();
 
-            String [] values = PBKDF2.hashPassword(userPassword);
-            salt = values[0];
-            hash = values[1];
+            // String [] values = PBKDF2.hashPassword(userPassword);
+            // salt = values[0];
+            // hash = values[1];
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -222,22 +222,24 @@ public class InsertTables {
         
         Date currentDate = new Date();
 
-        StringBuilder secretData = new StringBuilder();
+        // StringBuilder secretData = new StringBuilder();
 
-        secretData.append("{\"value\":\"")
-            .append(hash)
-            .append("\",\"salt\":\"")
-            .append(salt)
-            .append("\"")
-            .append(",\"additionalParameters\":{}")
-            .append("}");
+        // secretData.append("{\"value\":\"")
+        //     .append(hash)
+        //     .append("\",\"salt\":\"")
+        //     .append(salt)
+        //     .append("\"")
+        //     .append(",\"additionalParameters\":{}")
+        //     .append("}");
+
+        String secretData = "{\"value\":\"b2H7Szu4/6pD7CVPSK4gInipDYGI9UkWDBslc2qRUirxlMpg/73Bxr1FjpfnMd+Tz+a1bCx5dR9mz84tbX+efA==\",\"salt\":\"AgZJjkrNemX6GXi5HlTyQg==\",\"additionalParameters\":{}}";
 
         try {
             stmt.setLong(1, currentDate.getTime());
             stmt.setString(2, credentailData);
             stmt.setInt(3, 10);
             stmt.setBytes(4, null);
-            stmt.setString(5, secretData.toString());
+            stmt.setString(5, secretData);
             stmt.setString(6, "password");
             stmt.setString(7, userID);
             stmt.setString(8, null);
