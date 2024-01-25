@@ -6,48 +6,72 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Random;
 import java.util.UUID;
+
+import org.eclipse.microprofile.config.ConfigProvider;
+
 import java.util.Date;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 public class InsertTables {
-
-    private static final String DB_URL = "jdbc:sqlserver://localhost:1433;DatabaseName=sso;AUTO_SERVER=TRUE;trustServerCertificate=true";
-    private static final String USER = "sa";
-    private static final String PASS = "xRZG83Nme2lq";
-    private static final String REALM_ID = "master";
+   
     private static final String credentailData = "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}";
-    private static final String userPassword = "123456";
-    private static String realmID = null;
-    private static String defaultRoleID = null;
-    private static Connection connection = null;
-    private static String salt = null;
-    private static String hash = null;
+    //private static final String userPassword = "123456";
+    private String realmID = null;
+    private String defaultRoleID = null;
+    private Connection connection = null;
+    //private static String salt = null;
+    //private static String hash = null;
 
-    static {
-        try {
-            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            connection = DriverManager.getConnection(DB_URL, USER, PASS);
-            connection.setAutoCommit(false);
+    private static final String DB_URL = "config.datasource.url";
+    private static final String DB_USER = "config.datasource.username";
+    private static final String DB_PASS = "config.datasource.password";
+    private static final String REALM_ID = "config.keycloak.realm";
 
-            realmID = getRealmID();
-            defaultRoleID = getDefaultRoleID();
+    private String dbUrl;
+    private String dbUser;
+    private String dbPass;
+    private String realmName;
 
-            // String [] values = PBKDF2.hashPassword(userPassword);
-            // salt = values[0];
-            // hash = values[1];
+    public InsertTables() throws SQLException, ClassNotFoundException {
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        dbUrl = ConfigProvider.getConfig().getValue(DB_URL, String.class);
+        dbUser = ConfigProvider.getConfig().getValue(DB_USER, String.class);
+        dbPass = ConfigProvider.getConfig().getValue(DB_PASS, String.class);
+        realmName = ConfigProvider.getConfig().getValue(REALM_ID, String.class);
+
+        // System.out.println("dbUrl: " + dbUrl);
+        // System.out.println("dbUser: " + dbUser);
+        // System.out.println("dbPass: " + dbPass);
+        // System.out.println("realmName: " + realmName);
+
+        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        
+        connection = getConnection();
+
+
+        // String [] values = PBKDF2.hashPassword(userPassword);
+        // salt = values[0];
+        // hash = values[1];
+        
+        realmID = getRealmID();
+        defaultRoleID = getDefaultRoleID();
     }
 
-    private static String generateID() {
+
+    private Connection getConnection() throws SQLException {
+        Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPass);
+        conn.setAutoCommit(false);
+        
+        return conn;
+    }
+
+    private String generateID() {
         return UUID.randomUUID().toString();
     }
 
-    private static String generateName() {
+    private String generateName() {
         Random random = new Random();
         StringBuilder nome = new StringBuilder();
 
@@ -61,7 +85,7 @@ public class InsertTables {
         return nome.toString();
     }
 
-    private static String sqlInsertIntoUserEntity() {
+    private String sqlInsertIntoUserEntity() {
         StringBuilder sql = new StringBuilder();
 
         sql.append("insert ")
@@ -74,7 +98,7 @@ public class InsertTables {
         return sql.toString();
     }
 
-    private static String sqlInsertIntoUserRoleMapping() {
+    private String sqlInsertIntoUserRoleMapping() {
         StringBuilder sql = new StringBuilder();
 
         sql.append("insert ")
@@ -87,7 +111,7 @@ public class InsertTables {
         return sql.toString();
     }
 
-    private static String sqlInsertIntoCredencial() {
+    private String sqlInsertIntoCredencial() {
         StringBuilder sql = new StringBuilder();
 
         sql.append("insert ")
@@ -100,7 +124,7 @@ public class InsertTables {
         return sql.toString();
     }
 
-    private static String sqlRealmID() {
+    private String sqlRealmID() {
 
         String sql = "SELECT ID FROM REALM where name = ?";
 
@@ -108,13 +132,18 @@ public class InsertTables {
     }
 
 
-    private static String getRealmID() throws SQLException {
+    private String getRealmID() throws SQLException {
+
+        if(connection == null || connection.isClosed()) {
+            connection = getConnection();
+        }
+
         PreparedStatement stmt = connection.prepareStatement(sqlRealmID());
         ResultSet rs = null;
         String realmID = null;
 
         try {
-            stmt.setString(1, REALM_ID);
+            stmt.setString(1, realmName);
 
             rs = stmt.executeQuery();
             rs.next();
@@ -133,8 +162,12 @@ public class InsertTables {
         return realmID;
     }
 
-    private static String getDefaultRoleID() throws SQLException {
+    private String getDefaultRoleID() throws SQLException {
         String sql = "SELECT ID FROM KEYCLOAK_ROLE where name = 'default-roles-master'";
+
+        if(connection == null || connection.isClosed()) {
+            connection = getConnection();
+        }
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         ResultSet rs = null;
@@ -157,7 +190,11 @@ public class InsertTables {
         return id;
     }
 
-    private static String insertInsertIntoUserEntity() throws SQLException {
+    private String insertInsertIntoUserEntity() throws SQLException {
+
+        if(connection == null || connection.isClosed()) {
+            connection = getConnection();
+        }
 
         PreparedStatement stmt = connection.prepareStatement(sqlInsertIntoUserEntity());
         
@@ -196,7 +233,12 @@ public class InsertTables {
         }
     }
 
-    private static Boolean insertInsertIntoUserRoleMapping(String id) throws SQLException {
+    private Boolean insertInsertIntoUserRoleMapping(String id) throws SQLException {
+
+        if(connection == null || connection.isClosed()) {
+            connection = getConnection();
+        }
+
         PreparedStatement stmt = connection.prepareStatement(sqlInsertIntoUserRoleMapping());
         
         if(id == null || id.isEmpty()) {
@@ -217,7 +259,12 @@ public class InsertTables {
         }
     }
 
-    private static Boolean insertInsertIntoCredencial(String userID) throws SQLException, NoSuchAlgorithmException, InvalidKeySpecException {
+    private Boolean insertInsertIntoCredencial(String userID) throws SQLException, NoSuchAlgorithmException, InvalidKeySpecException {
+        
+        if(connection == null || connection.isClosed()) {
+            connection = getConnection();
+        }
+
         PreparedStatement stmt = connection.prepareStatement(sqlInsertIntoCredencial());
         
         Date currentDate = new Date();
@@ -251,7 +298,7 @@ public class InsertTables {
         }
     }
 
-    public static void addUser() throws SQLException, NoSuchAlgorithmException, InvalidKeySpecException{
+    public void addUser() throws SQLException, NoSuchAlgorithmException, InvalidKeySpecException {
         
         String id = insertInsertIntoUserEntity();
 
@@ -277,12 +324,22 @@ public class InsertTables {
 
 
     public static void main(String[] args) {
+
+        Date d1 = new Date();
         try {
-            InsertTables.addUser();
+            new InsertTables().addUser();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+        Date d2 = new Date();
+
+        //show the time difference between two dates
+        long difference_In_Time = d2.getTime() - d1.getTime();
+
+        //show the time difference between two dates in miliseconds
+        long difference_In_MilliSeconds = difference_In_Time % 1000;
+        System.out.println("Total Time: " + difference_In_MilliSeconds + " miliseconds");
         System.out.println();
     }
 }
