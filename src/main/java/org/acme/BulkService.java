@@ -14,9 +14,9 @@ import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-public class BulkService {
+public class BulkService implements Constants {
    
-    private static final String credentailData = "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}";
+    
     //private static final String userPassword = "123456";
     private String realmID = null;
     private String defaultRoleID = null;
@@ -85,60 +85,13 @@ public class BulkService {
         return nome.toString();
     }
 
-    private String sqlInsertIntoUserEntity() {
-        StringBuilder sql = new StringBuilder();
-
-        sql.append("insert ")
-            .append("into ")
-            .append("USER_ENTITY ")
-            .append("(CREATED_TIMESTAMP, EMAIL, EMAIL_CONSTRAINT, EMAIL_VERIFIED, ENABLED, FEDERATION_LINK, FIRST_NAME, LAST_NAME, NOT_BEFORE, REALM_ID, SERVICE_ACCOUNT_CLIENT_LINK, USERNAME, ID) ")
-            .append("values ")
-            .append("(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-
-        return sql.toString();
-    }
-
-    private String sqlInsertIntoUserRoleMapping() {
-        StringBuilder sql = new StringBuilder();
-
-        sql.append("insert ")
-            .append("into ")
-            .append("USER_ROLE_MAPPING ")
-            .append("(ROLE_ID, USER_ID) ")
-            .append("values ")
-            .append("(?, ?)");
-
-        return sql.toString();
-    }
-
-    private String sqlInsertIntoCredencial() {
-        StringBuilder sql = new StringBuilder();
-
-        sql.append("insert ")
-            .append("into ")
-            .append("CREDENTIAL ")
-            .append("(CREATED_DATE, CREDENTIAL_DATA, PRIORITY, SALT, SECRET_DATA, TYPE, USER_ID, USER_LABEL, ID) ")
-            .append("values ")
-            .append("(?, ?, ?, ?, ?, ?, ?, ?, ?)");
-
-        return sql.toString();
-    }
-
-    private String sqlRealmID() {
-
-        String sql = "SELECT ID FROM REALM where name = ?";
-
-        return sql;
-    }
-
-
     private String getRealmID() throws SQLException {
 
         if(connection == null || connection.isClosed()) {
             connection = getConnection();
         }
 
-        PreparedStatement stmt = connection.prepareStatement(sqlRealmID());
+        PreparedStatement stmt = connection.prepareStatement(SELECT_REALM_ID);
         ResultSet rs = null;
         String realmID = null;
 
@@ -163,7 +116,7 @@ public class BulkService {
     }
 
     private String getDefaultRoleID() throws SQLException {
-        String sql = "SELECT ID FROM KEYCLOAK_ROLE where name = 'default-roles-master'";
+        String sql = SELECT_ROLE_ID;
 
         if(connection == null || connection.isClosed()) {
             connection = getConnection();
@@ -196,7 +149,7 @@ public class BulkService {
             connection = getConnection();
         }
 
-        PreparedStatement stmt = connection.prepareStatement(sqlInsertIntoUserEntity());
+        PreparedStatement stmt = connection.prepareStatement(INSERT_INTO_USER_ENTITY);
         
         try {
             String firstName = generateName();
@@ -239,7 +192,7 @@ public class BulkService {
             connection = getConnection();
         }
 
-        PreparedStatement stmt = connection.prepareStatement(sqlInsertIntoUserRoleMapping());
+        PreparedStatement stmt = connection.prepareStatement(INSERT_INTO_USER_ROLE_MAPPING);
         
         if(id == null || id.isEmpty()) {
             return false;
@@ -265,7 +218,7 @@ public class BulkService {
             connection = getConnection();
         }
 
-        PreparedStatement stmt = connection.prepareStatement(sqlInsertIntoCredencial());
+        PreparedStatement stmt = connection.prepareStatement(INSERT_INTO_CREDENTIAL);
         
         Date currentDate = new Date();
 
@@ -283,7 +236,7 @@ public class BulkService {
 
         try {
             stmt.setLong(1, currentDate.getTime());
-            stmt.setString(2, credentailData);
+            stmt.setString(2, CREDENTIAL_DATA);
             stmt.setInt(3, 10);
             stmt.setBytes(4, null);
             stmt.setString(5, secretData);
