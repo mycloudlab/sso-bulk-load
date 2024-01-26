@@ -14,7 +14,7 @@ import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-public class InsertTables {
+public class BulkService {
    
     private static final String credentailData = "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}";
     //private static final String userPassword = "123456";
@@ -34,7 +34,7 @@ public class InsertTables {
     private String dbPass;
     private String realmName;
 
-    public InsertTables() throws SQLException, ClassNotFoundException {
+    public BulkService() throws SQLException, ClassNotFoundException {
 
         dbUrl = ConfigProvider.getConfig().getValue(DB_URL, String.class);
         dbUser = ConfigProvider.getConfig().getValue(DB_USER, String.class);
@@ -327,7 +327,7 @@ public class InsertTables {
 
         Date d1 = new Date();
         try {
-            new InsertTables().addUser();
+            new BulkService().addUser();
         } catch (Exception e) {
             e.printStackTrace();
         }

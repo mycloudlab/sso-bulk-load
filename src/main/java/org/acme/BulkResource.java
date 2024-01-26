@@ -20,7 +20,7 @@ public class BulkResource {
         StringBuilder sb = new StringBuilder();
         Date d1 = new Date();
        
-        InsertTables service = new InsertTables();
+        BulkService service = new BulkService();
 
         for(int i = 0; i < amountUsers; i++) {
             service.addUser();
@@ -28,20 +28,22 @@ public class BulkResource {
         Date d2 = new Date();
 
         long difference_In_Time = d2.getTime() - d1.getTime();
+        long averageTime = difference_In_Time / amountUsers;
 
        
         sb.append("----------------------------------------\n");
         sb.append("Inserted " + amountUsers + " users\n");
         sb.append("----------------------------------------");
-
-        //show the time difference between two dates in minutes
-        long difference_In_Minutes = (difference_In_Time / (1000 * 60)) % 60;
-        sb.append("\nTotal Time: " + difference_In_Minutes + " minutes");
-        long difference_In_Seconds = (difference_In_Time / 1000) % 60;
-        sb.append("\nTotal Time: " + difference_In_Seconds + " seconds");
-        long difference_In_MilliSeconds = difference_In_Time % 1000;
-        sb.append("\nTotal Time: " + difference_In_MilliSeconds + " miliseconds");
+        // long difference_In_Minutes = (difference_In_Time / (1000 * 60)) % 60;
+        // sb.append("\nTotal Time: " + difference_In_Minutes + " minutes");
+        // long difference_In_Seconds = (difference_In_Time / 1000) % 60;
+        // sb.append("\nTotal Time: " + difference_In_Seconds + " seconds");
+        // long difference_In_MilliSeconds = difference_In_Time % 1000;
+        // sb.append("\nTotal Time: " + difference_In_MilliSeconds + " miliseconds");
+        sb.append("\nTotal Time  : " + String.format("%02d:%02d:%02d:%03d", difference_In_Time / (3600 * 1000), (difference_In_Time % (3600 * 1000)) / (60 * 1000), ((difference_In_Time % (3600 * 1000)) % (60 * 1000)) / 1000, ((difference_In_Time % (3600 * 1000)) % (60 * 1000)) % 1000));
+        sb.append("\nAverage Time: " + String.format("%02d:%02d:%02d:%03d", averageTime / (3600 * 1000), (averageTime % (3600 * 1000)) / (60 * 1000), ((averageTime % (3600 * 1000)) % (60 * 1000)) / 1000, ((averageTime % (3600 * 1000)) % (60 * 1000)) % 1000));
         sb.append("\n----------------------------------------\n");
+        
 
         return sb.toString();
     }
