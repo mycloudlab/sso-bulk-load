@@ -18,6 +18,11 @@ interface Constants {
     public static final String DB_PASS = "config.datasource.password";
     public static final String REALM_ID = "config.keycloak.realm";
 
+    public static final String SELECT_ADMIN_USER_ID = "select ID from USER_ENTITY where USERNAME = ?";
+    public static final String DELETE_USER_ROLE_MAPPING = "delete from USER_ROLE_MAPPING where USER_ID <> ?";
+    public static final String DELETE_CREDENTIAL = "delete from CREDENTIAL where USER_ID  <> ?";
+    public static final String DELETE_ENTIY = "delete from USER_ENTITY  where ID  <> ?";
+
     private static String sqlInsertIntoUserEntity() {
         StringBuilder sql = new StringBuilder();
 

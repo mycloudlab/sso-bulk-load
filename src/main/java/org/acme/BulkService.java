@@ -9,11 +9,14 @@ import java.util.UUID;
 
 import org.eclipse.microprofile.config.ConfigProvider;
 
+import jakarta.enterprise.context.ApplicationScoped;
+
 import java.util.Date;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+@ApplicationScoped
 public class BulkService implements Constants {
    
     
@@ -23,11 +26,6 @@ public class BulkService implements Constants {
     private Connection connection = null;
     //private static String salt = null;
     //private static String hash = null;
-
-    private static final String DB_URL = "config.datasource.url";
-    private static final String DB_USER = "config.datasource.username";
-    private static final String DB_PASS = "config.datasource.password";
-    private static final String REALM_ID = "config.keycloak.realm";
 
     private String dbUrl;
     private String dbUser;
@@ -275,24 +273,89 @@ public class BulkService implements Constants {
         
     }
 
-
-    public static void main(String[] args) {
-
-        Date d1 = new Date();
-        try {
-            new BulkService().addUser();
-        } catch (Exception e) {
-            e.printStackTrace();
+    public void deleteAllUser(String adminUser) throws SQLException{
+        
+        if(connection == null || connection.isClosed()) {
+            connection = getConnection();
         }
 
-        Date d2 = new Date();
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
 
-        //show the time difference between two dates
-        long difference_In_Time = d2.getTime() - d1.getTime();
+        try {
+            stmt = connection.prepareStatement(SELECT_ADMIN_USER_ID);
 
-        //show the time difference between two dates in miliseconds
-        long difference_In_MilliSeconds = difference_In_Time % 1000;
-        System.out.println("Total Time: " + difference_In_MilliSeconds + " miliseconds");
-        System.out.println();
+            stmt.setString(1, adminUser);
+
+            rs = stmt.executeQuery();
+            
+            String adminUserID = null;
+            
+            if(rs.next()) {
+                adminUserID = rs.getString("ID");
+            } else {
+                new IllegalArgumentException("User not found!");
+                return;
+            }
+        
+            stmt.close();
+
+            stmt = connection.prepareStatement(DELETE_USER_ROLE_MAPPING);
+            stmt.setString(1, adminUserID);
+            stmt.executeUpdate();
+            stmt.close();
+
+            stmt = connection.prepareStatement(DELETE_CREDENTIAL);
+            stmt.setString(1, adminUserID);
+            stmt.executeUpdate();
+            stmt.close();
+
+            stmt = connection.prepareStatement(DELETE_ENTIY);
+            stmt.setString(1, adminUserID);
+            stmt.executeUpdate();
+            stmt.close();
+
+            connection.commit();
+
+        } finally {
+            if(stmt != null && !stmt.isClosed()) {
+                stmt.close();
+            }
+
+            if(rs != null) {
+                rs.close();
+            }
+        }
+        
     }
+
+
+    // public static void main(String[] args) {
+
+    //     Date d1 = new Date();
+    //     try {
+    //         new BulkService().addUser();
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //     }
+
+    //     Date d2 = new Date();
+
+    //     //show the time difference between two dates
+    //     long difference_In_Time = d2.getTime() - d1.getTime();
+
+    //     //show the time difference between two dates in miliseconds
+    //     long difference_In_MilliSeconds = difference_In_Time % 1000;
+    //     System.out.println("Total Time: " + difference_In_MilliSeconds + " miliseconds");
+    //     System.out.println();
+    // }
+
+    // public static void main(String[] args) {
+    //     try {
+    //         new BulkService().deleteAllUser("Teste");
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //     }
+        
+    // }
 }
