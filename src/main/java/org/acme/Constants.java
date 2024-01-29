@@ -13,6 +13,7 @@ interface Constants {
 
     public static final String CREDENTIAL_DATA = "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}";
 
+    public static final String DB_DRIVER = "config.datasource.driver";
     public static final String DB_URL = "config.datasource.url";
     public static final String DB_USER = "config.datasource.username";
     public static final String DB_PASS = "config.datasource.password";

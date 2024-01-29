@@ -27,6 +27,7 @@ public class BulkService implements Constants {
     //private static String salt = null;
     //private static String hash = null;
 
+    private String database;
     private String dbUrl;
     private String dbUser;
     private String dbPass;
@@ -34,17 +35,57 @@ public class BulkService implements Constants {
 
     public BulkService() throws SQLException, ClassNotFoundException {
 
+        StringBuilder sb = new StringBuilder();
+
+        
+        database = ConfigProvider.getConfig().getValue(DB_DRIVER, String.class);
+
+        if (database == null || database.isEmpty()) {
+            
+            sb.append("Invalid database type: ")
+                .append(database)
+                .append(". Valid values are: sqlserver, postgres");
+        }
+        
         dbUrl = ConfigProvider.getConfig().getValue(DB_URL, String.class);
+
+        if (dbUrl == null || dbUrl.isEmpty()) {
+            sb.append("Invalid database url: ")
+                .append(dbUrl);
+        }
+
         dbUser = ConfigProvider.getConfig().getValue(DB_USER, String.class);
+
+        if (dbUser == null || dbUser.isEmpty()) {
+            sb.append("Invalid database user: ")
+                .append(dbUser);
+        }
         dbPass = ConfigProvider.getConfig().getValue(DB_PASS, String.class);
+
+        if (dbPass == null || dbPass.isEmpty()) {
+            sb.append("Invalid database password: ")
+                .append(dbPass);
+        }
+
+        if(sb.length() > 0) {
+            throw new IllegalArgumentException(sb.toString());
+        }
+
+        if(database.equals("sqlserver")) {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        } else if(database.equals("postgres")) {
+            Class.forName("org.postgresql.Driver");
+        } else {
+            throw new IllegalArgumentException("Invalid database type: " + database);
+        }
+
+
         realmName = ConfigProvider.getConfig().getValue(REALM_ID, String.class);
 
         // System.out.println("dbUrl: " + dbUrl);
         // System.out.println("dbUser: " + dbUser);
         // System.out.println("dbPass: " + dbPass);
         // System.out.println("realmName: " + realmName);
-
-        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         
         connection = getConnection();
 
@@ -330,25 +371,25 @@ public class BulkService implements Constants {
     }
 
 
-    // public static void main(String[] args) {
+    public static void main(String[] args) {
 
-    //     Date d1 = new Date();
-    //     try {
-    //         new BulkService().addUser();
-    //     } catch (Exception e) {
-    //         e.printStackTrace();
-    //     }
+        Date d1 = new Date();
+        try {
+            new BulkService().addUser();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-    //     Date d2 = new Date();
+        Date d2 = new Date();
 
-    //     //show the time difference between two dates
-    //     long difference_In_Time = d2.getTime() - d1.getTime();
+        //show the time difference between two dates
+        long difference_In_Time = d2.getTime() - d1.getTime();
 
-    //     //show the time difference between two dates in miliseconds
-    //     long difference_In_MilliSeconds = difference_In_Time % 1000;
-    //     System.out.println("Total Time: " + difference_In_MilliSeconds + " miliseconds");
-    //     System.out.println();
-    // }
+        //show the time difference between two dates in miliseconds
+        long difference_In_MilliSeconds = difference_In_Time % 1000;
+        System.out.println("Total Time: " + difference_In_MilliSeconds + " miliseconds");
+        System.out.println();
+    }
 
     // public static void main(String[] args) {
     //     try {
