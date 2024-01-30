@@ -75,6 +75,10 @@ public class BulkService implements Constants {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         } else if(database.equals("postgres")) {
             Class.forName("org.postgresql.Driver");
+        } else if(database.equals("mariadb")) {
+            Class.forName("org.mariadb.jdbc.Driver");
+        } else if(database.equals("mysql")) {
+            Class.forName("com.mysql.cj.jdbc.Driver");
         } else {
             throw new IllegalArgumentException("Invalid database type: " + database);
         }

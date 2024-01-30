@@ -18,7 +18,7 @@ public class BulkResource {
     BulkService service;
     
     @POST
-    @Path("/insert{amountUsers}")
+    @Path("/insert/{amountUsers}")
     @Produces(MediaType.TEXT_PLAIN)
     public String insert(Integer amountUsers) throws SQLException, NoSuchAlgorithmException, InvalidKeySpecException, ClassNotFoundException{
 
@@ -45,7 +45,7 @@ public class BulkResource {
     }
 
     @DELETE
-    @Path("/delete{adminUserName}")
+    @Path("/delete/{adminUserName}")
     @Produces(MediaType.TEXT_PLAIN)
     public String delete (String adminUserName) throws SQLException {
         StringBuilder sb = new StringBuilder();
