@@ -79,8 +79,10 @@ public class BulkService implements Constants {
             Class.forName("org.mariadb.jdbc.Driver");
         } else if(database.equals("mysql")) {
             Class.forName("com.mysql.cj.jdbc.Driver");
+        } else if(database.equals("oracle")) {
+            Class.forName("oracle.jdbc.driver.OracleDriver");
         } else {
-            throw new IllegalArgumentException("Invalid database type: " + database);
+            throw new IllegalArgumentException("Invalid database type: " + database + ". Valid values are: sqlserver, postgres, mariadb, mysql, oracle");
         }
 
 
@@ -196,6 +198,7 @@ public class BulkService implements Constants {
         
         try {
             String firstName = generateName();
+            String lastName = generateName();
             Date currentDate = new Date();
             String id = generateID();
 
@@ -210,11 +213,11 @@ public class BulkService implements Constants {
             stmt.setBoolean(5, true);
             stmt.setString(6, null);
             stmt.setString(7, firstName);
-            stmt.setString(8, generateName());
+            stmt.setString(8, lastName);
             stmt.setLong(9, 0);
             stmt.setString(10, realmID);
             stmt.setString(11, null);
-            stmt.setString(12, firstName.toLowerCase());
+            stmt.setString(12, firstName.toLowerCase() + "." + lastName.toLowerCase());
             stmt.setString(13, id);
 
             if(stmt.executeUpdate() == 1) {
