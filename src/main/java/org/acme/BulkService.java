@@ -44,7 +44,7 @@ public class BulkService implements Constants {
             
             sb.append("Invalid database type: ")
                 .append(database)
-                .append(". Valid values are: sqlserver, postgres");
+                .append(". Valid values are: sqlserver, postgres, mariadb, mysql, and oracle");
         }
         
         dbUrl = ConfigProvider.getConfig().getValue(DB_URL, String.class);
@@ -88,6 +88,7 @@ public class BulkService implements Constants {
 
         realmName = ConfigProvider.getConfig().getValue(REALM_ID, String.class);
 
+        // System.out.println("database: " + database);
         // System.out.println("dbUrl: " + dbUrl);
         // System.out.println("dbUser: " + dbUser);
         // System.out.println("dbPass: " + dbPass);
@@ -378,25 +379,25 @@ public class BulkService implements Constants {
     }
 
 
-    public static void main(String[] args) {
+    // public static void main(String[] args) {
 
-        Date d1 = new Date();
-        try {
-            new BulkService().addUser();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    //     Date d1 = new Date();
+    //     try {
+    //         new BulkService().addUser();
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //     }
 
-        Date d2 = new Date();
+    //     Date d2 = new Date();
 
-        //show the time difference between two dates
-        long difference_In_Time = d2.getTime() - d1.getTime();
+    //     //show the time difference between two dates
+    //     long difference_In_Time = d2.getTime() - d1.getTime();
 
-        //show the time difference between two dates in miliseconds
-        long difference_In_MilliSeconds = difference_In_Time % 1000;
-        System.out.println("Total Time: " + difference_In_MilliSeconds + " miliseconds");
-        System.out.println();
-    }
+    //     //show the time difference between two dates in miliseconds
+    //     long difference_In_MilliSeconds = difference_In_Time % 1000;
+    //     System.out.println("Total Time: " + difference_In_MilliSeconds + " miliseconds");
+    //     System.out.println();
+    // }
 
     // public static void main(String[] args) {
     //     try {
