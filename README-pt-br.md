@@ -27,7 +27,7 @@ Este projeto não é afiliado à Red Hat e não é uma iniciativa oficial. É um
 * [Executando o contêiner utilizando OpenShift](#executando-o-contêiner-utilizando-openshift)
 
 ## Compilando e Executando
-Este projeto é arquitetado para operar dentro de um contêiner. As seguintes instruções irão guiá-lo através do processo de compilação do código-fonte, construção de uma imagem de contêiner e execução do contêiner. Se preferir, você pode pegar a imagem do quay.io e pular as etapas de compilação do código-fonte e construção da imagem do contêiner.
+Este projeto é arquitetado para operar dentro de um contêiner. As seguintes instruções irão guiá-lo através do processo de compilação do código-fonte, construção de uma imagem de contêiner e execução do contêiner. Se preferir, você pode pegar a imagem do quay.io e pular as etapas de compilação do código-fonte e construção da imagem do contêiner. 
 
 ### Compilando o código fonte
 Agora que você tem as ferramentas necessárias instaladas, pode compilar o código-fonte. Para fazer isso, execute o seguinte comando:
