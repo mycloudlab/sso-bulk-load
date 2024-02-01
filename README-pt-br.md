@@ -1,5 +1,5 @@
 # SSO Bulk Load
-Esta aplicação é projetado para facilitar a criação em massa de usuários no Red Hat Single Sign-On (RH-SSO), permitindo testes de desempenho extensivos do sistema.
+Esta aplicação é projetada para facilitar a criação em massa de usuários no Red Hat Single Sign-On (RH-SSO), permitindo testes de desempenho extensivos do sistema.
 
 ## Importante
 Este projeto não é afiliado à Red Hat e não é uma iniciativa oficial. É uma iniciativa pessoal feito para me ajudar a testar o RH-SSO. Use este projeto por sua conta e risco. Não é recomendado para uso em um ambiente de produção.
