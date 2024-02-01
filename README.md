@@ -247,7 +247,7 @@ oc get route sso-bulk-load-multi-db
 Now lets using the api to create users, you can use the following command to create users:
 ```shell
 curl -X 'POST' \
-  'http://localhost:9000/bulk/insert/10000' \
+  'http://<hostname>:<port>/bulk/insert/10000' \
   -H 'accept: text/plain' \
   -d ''     
 ```
@@ -258,7 +258,7 @@ This command will create 10000 users in the RH-SSO.
 Now lets using the api to drop users, you can use the following command to drop users:
 ```shell
 curl -X 'DELETE' \
-  'http://localhost:9000/bulk/delete/admin' \
+  'http://<hostname>:<port>bulk/delete/admin' \
   -H 'accept: text/plain'    
 ```
 All users will be dropped from the RH-SSO, except the admin user. 
