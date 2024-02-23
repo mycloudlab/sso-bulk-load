@@ -60,6 +60,11 @@
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-jdbc-oracle</artifactId>
     </dependency>
+ <dependency>
+    <groupId>io.quarkus</groupId>
+    <artifactId>quarkus-smallrye-openapi</artifactId>
+</dependency>
+   
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-junit5</artifactId>
